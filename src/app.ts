@@ -1,22 +1,24 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import { connectToDb } from './dataAccess';
 const Counter = require('./models/counter')
 const gameRoutes = require('./routes/gameRoute');
-const env = require('dotenv').config();
-
-var app = express();
+require('dotenv').config();
 
 const uri = `mongodb+srv://danny:${process.env.MONGO_PASSWORD}@cardgamedb-31nej.mongodb.net/cardGame?retryWrites=true&w=majority`;
 connectToDb(uri)
 
+var app = express();
+
+
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors({ origin: 'http://localhost:4200'}));
+const portNumber = 8080;
 
-app.listen(8080, (port, err) => {
+app.listen(portNumber, (port, err) => {
     if (err) {
         return console.error(err);
       }
@@ -27,7 +29,7 @@ app.listen(8080, (port, err) => {
         counter.save();
       };
 
-      return console.log(`server is listening on ${port}`);
+      return console.log(`server is listening on ${portNumber}`);
 });  
 
 app.use('/', gameRoutes)

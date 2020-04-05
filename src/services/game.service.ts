@@ -1,29 +1,49 @@
-import { generateCards } from './generateCards.service';
-import { makeRows } from './makeRows.service';
-import { shuffleCards } from './shuffleCards.service';
-import { getPercentInOrder } from './getPercentInOrder.service';
-const Game = require('../models/game')
+import { generateCards } from './generateCards';
+import { makeRows } from './makeRows';
+import { shuffleCards } from './shuffleCards';
+import { getPercentInOrder } from './getPercentInOrder';
+const Game = require('../models/game');
+const GameDm = require('../data-models/gameDm');
+
 
 export class GameService {
-    static setupGame(res) {
+    static setupGame(): Promise<any> {
         let deck = generateCards();
-        return shuffleAndSetupGame(deck);
+        let game = shuffleAndSetupGame(deck);
+        let gameDb = new GameDm({ ...game });
+
+        return new Promise((resolve, reject) => {
+            gameDb.save((error, game) => {
+                if (error) reject(error);
+                resolve(game)
+            })
+        })
     }
 
-    static shuffleCards(deck: string[]) {
+    static shuffleCards(deck: string[]): Promise<any> {
         if (deck.length !== 52) deck = generateCards();
 
-        return shuffleAndSetupGame(deck);
+        const game =  shuffleAndSetupGame(deck);
+        const gameDb = new GameDm({ ...game });
+
+        return new Promise((resolve, reject) => {
+            gameDb.save((error, game) => {
+                if (error) reject(error);
+            
+                console.log('saved game', game);
+                resolve(game);
+              });
+        });
     }
 }
 
 
 function shuffleAndSetupGame(deck: string[]) {
     deck = shuffleCards(deck);
-    const igame = makeRows(deck);
-    igame.inOrder = getPercentInOrder(igame) as number;
+    const game = makeRows(deck);
+    game.inOrder = getPercentInOrder(game) as number;
 
-    return igame;
+    return game;
 }
 
 module.exports = GameService;

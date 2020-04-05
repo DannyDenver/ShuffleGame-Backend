@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 
-
 export function connectToDb(uri: string) {
     mongoose.connect(uri);
     const database = mongoose.connection;

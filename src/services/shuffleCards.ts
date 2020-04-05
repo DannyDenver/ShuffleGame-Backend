@@ -9,4 +9,5 @@ export function shuffleCards(deck: string[]): string[] {
 
     return deck;
 }
-exports.shuffleCards = function(deck: string[]){ return shuffleCards(deck)}
+
+exports.shuffleCards = (deck: string[]) => shuffleCards(deck);
